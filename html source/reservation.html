@@ -6,31 +6,10 @@
     <title>Reservation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css">    
-    <style>
-        .my-footer{
-            background-color: #497d85;
-            margin-top: 1.5em;
-            height: 5em;
-            padding: 1em;
-            color: white    ;
-            font-size: 80%;
-        }
-        .room-image{
-            max-width: 50%;
-        }
-
-        .redtext{
-          color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="./static/styles/styles.css">
       <script defer src="https://unpkg.com/notie"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
-    <style>
-      /* override styles here */
-      .notie-container {
-        box-shadow: none;
-      }
-      </style>
+
       <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
@@ -134,10 +113,20 @@
               })()
             document.getElementById("colorButton").addEventListener("click",function(){
               
-              
+              let html=
+              `<form id="check-availabilty-form action="" method="post" novalidate class="needs-validation">
+                    <div class="row" id="reseravation-dates-modal">
+                      <div class="col">
+                        <input disabled required class="form-control" type="text" id="start" name="start" placeholder="Arrival">
+                      </div>
+                      <div class="col">
+                        <input disabled required class="form-control" type="text" id="end" name="end" placeholder="Departure">
+                      </div>
+                    </div>
+              </form>`
               //notify("this is my message","warning")
               //notifyModal("title","hello world","success","My ass")
-              attention.error({msg:"Ooops"})
+              attention.custom({msg:html,title:"Choose your dates"})
             })
 
             const elem = document.getElementById('reservation-dates');
@@ -209,10 +198,50 @@
                   footer:footer
                  }) 
               }
+
+              async function custom(c){
+                const{
+                  msg="",
+                  title=""
+                }=c;
+                const { value: formValues } = await Swal.fire({
+                      title: title,
+                      html:msg,
+                      backdrop:false,
+                      focusConfirm: false,
+                      showCancelButton:true,
+                      willOpen:()=>{
+                        const elem=document.getElementById("reseravation-dates-modal");
+                        const rp=new DateRangePicker(elem,{
+                          format:"yyyy-mm-dd",
+                          showOnFocus:true,
+                        })
+
+                      },
+                      preConfirm: ()=>{
+                        return [
+                          document.getElementById('start').value,
+                          document.getElementById('end').value
+                        ]
+                      },
+                      didOpen:()=>{
+                        document.getElementById("start").removeAttribute("disabled")
+                        document.getElementById("end").removeAttribute("disabled")
+                        
+                      }
+                    })
+
+                    if (formValues) {
+                      Swal.fire(JSON.stringify(formValues))
+                    }
+
+              }
+
               return{
                 toast: toast,
                 success: success,
-                error:error
+                error:error,
+                custom:custom
               }
             }
     </script>

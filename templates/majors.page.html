@@ -1,0 +1,53 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="container">
+    <div class="row">
+        <div class="col ">
+            <img src="/static/images/marjors-suite.png" class="img-fluid img-thumbnail mx-auto d-block room-image" alt="General">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center mt-4">Majors Suite</h1>
+            <p>Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+                Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+                Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+                Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+                Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+                Your home away from home,set on the majestic wataers of the Atlantidc Ocean, this will be a amamizng vacation.
+            </p>
+        </div>
+    </div>
+   
+    <div class="row">
+        <div class="col text-center">
+         <a id="check-availabilty-button" href="#!" class="btn btn-success">Check Availability</a>
+        </div>
+    </div>
+    
+</div>
+{{end}}
+
+{{define "js"}}
+<script>
+document.getElementById("check-availabilty-button").addEventListener("click",function(){
+                    
+    let html=
+    `<form id="check-availabilty-form action="" method="post" novalidate class="needs-validation">
+          <div class="row" id="reseravation-dates-modal">
+            <div class="col">
+              <input disabled required class="form-control" type="text" id="start" name="start" placeholder="Arrival">
+            </div>
+            <div class="col">
+              <input disabled required class="form-control" type="text" id="end" name="end" placeholder="Departure">
+            </div>
+          </div>
+    </form>`
+    //notify("this is my message","warning")
+    //notifyModal("title","hello world","success","My ass")
+    attention.custom({msg:html,title:"Choose your dates"})
+  })
+</script>
+{{end}}

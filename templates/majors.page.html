@@ -30,12 +30,13 @@
 </div>
 {{end}}
 
+
 {{define "js"}}
 <script>
 document.getElementById("check-availabilty-button").addEventListener("click",function(){
                     
     let html=
-    `<form id="check-availabilty-form action="" method="post" novalidate class="needs-validation">
+    `<form id="check-availabilty-form" action="" method="post" novalidate class="needs-validation">
           <div class="row" id="reseravation-dates-modal">
             <div class="col">
               <input disabled required class="form-control" type="text" id="start" name="start" placeholder="Arrival">
@@ -47,7 +48,56 @@ document.getElementById("check-availabilty-button").addEventListener("click",fun
     </form>`
     //notify("this is my message","warning")
     //notifyModal("title","hello world","success","My ass")
-    attention.custom({msg:html,title:"Choose your dates"})
+    attention.custom({
+      msg:html,
+      title:"Choose your dates",
+      willOpen:()=>{
+                                const elem=document.getElementById("reseravation-dates-modal");
+                                const rp=new DateRangePicker(elem,{
+                                  format:"yyyy-mm-dd",
+                                  showOnFocus:true,
+                                  minDate:new Date(),
+                                })
+        
+                              },
+                              didOpen:()=>{
+                                document.getElementById("start").removeAttribute("disabled")
+                                document.getElementById("end").removeAttribute("disabled")
+                                
+                              },
+      callback:function(result){
+        let form=document.getElementById("check-availabilty-form")
+        let formdata=new FormData(form)
+        formdata.append("csrf_token","{{.CSRFToken}}")
+        formdata.append("room_id","2");
+        fetch("/search-availability-json",{
+          method:"post",
+          body:formdata,
+        })
+          .then(response=>response.json())
+          .then(data=>{
+            if(data.ok){
+              attention.custom({
+                icon: 'success',
+                showConfirmButton: false,
+                msg: '<p>Room is available!</p>'
+                    + '<p><a href="/book-room?id='
+                    + data.room_id
+                    + '&s='
+                    + data.start_date
+                    + '&e='
+                    + data.end_date
+                    + '" class="btn btn-primary">'
+                    + 'Book now!</a></p>',
+            })
+            }else{
+              attention.error({
+                msg:"No availability",
+              })
+            }
+          })
+      }
+    })
   })
 </script>
 {{end}}

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/justinas/nosurf"
+	"github.com/prranavv/bookings/internal/helpers"
 )
 
 // NoSurf adds CSRF protection to all POST requests
@@ -27,6 +28,17 @@ func SessionLoad(next http.Handler) http.Handler {
 func WritetoConsole(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Hit the page")
+		next.ServeHTTP(w, r)
+	})
+}
+
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !helpers.IsAuthenticate(r) {
+			session.Put(r.Context(), "error", "log in first")
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }

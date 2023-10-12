@@ -34,7 +34,8 @@ CREATE TABLE public.reservation (
     end_date date NOT NULL,
     room_id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    processed integer DEFAULT 0 NOT NULL
 );
 
 
@@ -362,7 +363,7 @@ CREATE UNIQUE INDEX users_email_idx ON public.users USING btree (email);
 --
 
 ALTER TABLE ONLY public.reservation
-    ADD CONSTRAINT reservation_rooms_id_fk FOREIGN KEY (room_id) REFERENCES public.rooms(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT reservation_rooms_id_fk FOREIGN KEY (room_id) REFERENCES public.rooms(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -370,7 +371,7 @@ ALTER TABLE ONLY public.reservation
 --
 
 ALTER TABLE ONLY public.room_restrictions
-    ADD CONSTRAINT room_restrictions_reservation_id_fk FOREIGN KEY (reservation_id) REFERENCES public.reservation(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT room_restrictions_reservation_id_fk FOREIGN KEY (reservation_id) REFERENCES public.reservation(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
